@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { MessageSquare, Database, Plug } from 'lucide-react'
+import { MessageSquare, Database, Plug, LayoutDashboard } from 'lucide-react'
 import { useConnectionStore } from '../../stores/connectionStore'
 import clsx from 'clsx'
 
 const navItems = [
   { to: '/chat', icon: MessageSquare, label: 'Chat' },
+  { to: '/dashboards', icon: LayoutDashboard, label: 'Dashboards' },
   { to: '/connections', icon: Plug, label: 'Connexions' },
 ]
 

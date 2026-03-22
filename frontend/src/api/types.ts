@@ -105,3 +105,67 @@ export interface SchemaInfo {
   dialect: string
   tables: SchemaTable[]
 }
+
+// --- Dashboard types ---
+
+export type WidgetType = 'chart' | 'table' | 'kpi' | 'text'
+export type ChartType = 'bar' | 'line' | 'scatter' | 'pie' | 'bar_grouped' | 'area'
+
+export interface WidgetConfig {
+  chart_type: ChartType | null
+  x_column: string | null
+  y_columns: string[]
+  color: string | null
+  title: string
+}
+
+export interface DashboardWidget {
+  id: string
+  widget_type: WidgetType
+  title: string
+  nl_query: string
+  sql_query: string
+  config: WidgetConfig
+  position: number
+  width: 1 | 2 | 3
+  height: 1 | 2
+  created_at: string
+}
+
+export interface Dashboard {
+  id: string
+  name: string
+  description: string
+  connection_id: string
+  widgets: DashboardWidget[]
+  created_at: string
+  updated_at: string
+}
+
+export interface DashboardCreate {
+  name: string
+  description?: string
+  connection_id: string
+}
+
+export interface DashboardUpdate {
+  name?: string
+  description?: string
+  widgets?: DashboardWidget[]
+}
+
+export interface AddWidgetRequest {
+  nl_text: string
+  widget_type?: WidgetType
+}
+
+export interface WidgetRefreshResult {
+  widget_id: string
+  result: QueryResult | null
+  error: string | null
+}
+
+export interface DashboardRefreshResult {
+  dashboard_id: string
+  results: WidgetRefreshResult[]
+}
