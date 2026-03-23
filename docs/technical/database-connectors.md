@@ -43,10 +43,10 @@ Fonctionnalités spécifiques :
 
 Configuration minimale du user :
 ```sql
-CREATE USER dbia_query WITH PASSWORD 'xxx';
-GRANT CONNECT ON DATABASE mydb TO dbia_query;
-GRANT USAGE ON SCHEMA public TO dbia_query;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbia_query;
+CREATE USER datachat_query WITH PASSWORD 'xxx';
+GRANT CONNECT ON DATABASE mydb TO datachat_query;
+GRANT USAGE ON SCHEMA public TO datachat_query;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO datachat_query;
 ```
 
 ### SQLite (Phase 1)

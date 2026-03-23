@@ -1,4 +1,4 @@
-# CODEBASE.md — Référence complète DB-IA
+# CODEBASE.md — Référence complète DataChat
 
 > Fichier de référence technique maintenu à jour. Lire ce fichier suffit pour travailler sur n'importe quelle partie du projet sans ré-explorer le code.
 
@@ -75,8 +75,8 @@ backend/app/
 │   └── chat/
 │       └── service.py           # ChatService — sessions en mémoire (Phase 1)
 ├── repositories/
-│   ├── connection_repo.py       # ConnectionRepository — JSON chiffré dans .dbia_connections/
-│   └── query_repo.py            # QueryRepository — JSONL dans .dbia_history/{conn_id}.jsonl
+│   ├── connection_repo.py       # ConnectionRepository — JSON chiffré dans .datachat_connections/
+│   └── query_repo.py            # QueryRepository — JSONL dans .datachat_history/{conn_id}.jsonl
 ├── utils/
 │   ├── crypto.py                # Fernet encryption (SECRET_KEY → SHA-256)
 │   └── logging.py               # structlog JSON
@@ -245,7 +245,7 @@ ollama_api_base: str = "http://localhost:11434"
 # Infrastructure
 qdrant_url: str = "http://localhost:6333"
 redis_url: str = "redis://localhost:6379/0"
-database_url: str = "sqlite+aiosqlite:///./dbia.db"
+database_url: str = "sqlite+aiosqlite:///./datachat.db"
 
 # Sécurité
 secret_key: str = "dev-secret-key-change-in-production"
@@ -289,7 +289,7 @@ Sortie: ChatResponse
 ```python
 class XxxRepository:
     def __init__(self, settings: "Settings"):
-        self._store_dir = Path(".dbia_xxx")
+        self._store_dir = Path(".datachat_xxx")
         self._store_dir.mkdir(exist_ok=True)
 
     def _path(self, id: str) -> Path:
@@ -478,8 +478,8 @@ cd frontend && npm run build
 | Phase | Statut |
 |-------|--------|
 | Phase 1 — MVP NL2SQL | ✅ Complet — 39/39 tests |
-| Dashboard — Backend models + API | 🔲 À faire |
-| Dashboard — Frontend pages + composants | 🔲 À faire |
+| Dashboard — Backend models + API | ✅ Complet |
+| Dashboard — Frontend pages + composants | ✅ Complet |
 | Phase 2 — Streaming WebSocket | 🔲 À faire |
 | Phase 2 — MySQL/CSV connecteurs | 🔲 À faire |
 | Phase 3 — Schema Explorer + Audit | 🔲 À faire |

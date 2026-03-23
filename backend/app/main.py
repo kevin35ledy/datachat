@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(
-        title="DB-IA API",
+        title="DataChat API",
         description="LLM-powered database interface — NL2SQL, schema exploration, auditing",
         version="0.1.0",
         lifespan=lifespan,

@@ -13,7 +13,7 @@
 
 ```bash
 git clone <repo>
-cd db-ia
+cd datachat
 cp .env.example .env
 ```
 

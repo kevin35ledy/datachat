@@ -10,12 +10,12 @@ if TYPE_CHECKING:
 
 class DashboardRepository:
     """
-    Stores dashboards as plain JSON files in .dbia_dashboards/.
+    Stores dashboards as plain JSON files in .datachat_dashboards/.
     No encryption needed — dashboards contain no credentials.
     """
 
     def __init__(self, settings: "Settings"):
-        self._store_dir = Path(".dbia_dashboards")
+        self._store_dir = Path(".datachat_dashboards")
         self._store_dir.mkdir(exist_ok=True)
 
     def _path(self, dashboard_id: str) -> Path:

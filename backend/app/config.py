@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=("../.env", ".env"), extra="ignore")
 
     # App
-    app_name: str = "DB-IA"
+    app_name: str = "DataChat"
     debug: bool = False
     show_sql_errors: bool = True  # Set False in production
 
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     schema_rag_min_tables: int = 20  # Skip RAG below this threshold
 
     # App database
-    database_url: str = "sqlite+aiosqlite:///./dbia.db"
+    database_url: str = "sqlite+aiosqlite:///./datachat.db"
 
     # Security
     secret_key: str = "dev-secret-key-change-in-production"

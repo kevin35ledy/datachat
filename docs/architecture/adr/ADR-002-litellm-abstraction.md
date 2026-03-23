@@ -5,7 +5,7 @@
 
 ## Contexte
 
-DB-IA doit supporter plusieurs providers LLM (Claude, OpenAI, Ollama, etc.) et permettre de les swapper sans changer de code. Les APIs des providers changent fréquemment. La dépendance directe à un seul SDK provider crée un risque de lock-in.
+DataChat doit supporter plusieurs providers LLM (Claude, OpenAI, Ollama, etc.) et permettre de les swapper sans changer de code. Les APIs des providers changent fréquemment. La dépendance directe à un seul SDK provider crée un risque de lock-in.
 
 ## Décision
 

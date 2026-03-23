@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-DB-IA cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doit être accessible aux non-techniciens sans sacrifier la puissance pour les experts.
+DataChat cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doit être accessible aux non-techniciens sans sacrifier la puissance pour les experts.
 
 ---
 
@@ -25,7 +25,7 @@ DB-IA cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doi
 - Outils BI trop complexes pour des questions ponctuelles
 - Résultats qui arrivent trop tard
 
-### Ce que DB-IA lui apporte
+### Ce que DataChat lui apporte
 
 - Autonomie complète sur les questions de données
 - Résultats immédiats en langage naturel
@@ -60,7 +60,7 @@ DB-IA cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doi
 - Les outils d'exploration sont trop GUI-centric (lents)
 - Pas de moyen rapide d'auditer une base reprise en maintenance
 
-### Ce que DB-IA lui apporte
+### Ce que DataChat lui apporte
 
 - Explorateur de schéma visuel avec graphe de relations
 - Chat pour exploration rapide ("quelles tables ont une relation avec users ?")
@@ -95,7 +95,7 @@ DB-IA cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doi
 - Pas d'outil unifié pour tous les types de DB
 - Les rapports doivent être écrits manuellement
 
-### Ce que DB-IA lui apporte
+### Ce que DataChat lui apporte
 
 - Audit automatisé en quelques minutes
 - Rapport structuré avec sévérités et recommandations actionnables
@@ -130,7 +130,7 @@ DB-IA cible 4 profils d'utilisateurs avec des besoins distincts. L'interface doi
 - Dépendance à l'équipe data pour chaque nouvelle métrique
 - Les rapports d'audit techniques sont incompréhensibles
 
-### Ce que DB-IA lui apporte
+### Ce que DataChat lui apporte
 
 - Questions ad hoc en langage naturel avec résultats immédiats
 - Résumé d'audit en langage non-technique

@@ -1,4 +1,4 @@
-# CLAUDE.md — DB-IA : Guide du projet
+# CLAUDE.md — DataChat : Guide du projet
 
 > Ce fichier est la référence permanente pour tout développement assisté par IA sur ce projet.
 > Il doit être lu en priorité et mis à jour à chaque décision architecturale significative.
@@ -7,7 +7,7 @@
 
 ## Vision du projet
 
-DB-IA rend les bases de données accessibles à tous en traduisant le langage naturel en requêtes validées et sûres. Il permet aussi d'explorer le schéma d'une base et d'auditer sa sécurité, ses performances et la qualité de ses données — propulsé par n'importe quel LLM, connecté à n'importe quelle base de données.
+DataChat rend les bases de données accessibles à tous en traduisant le langage naturel en requêtes validées et sûres. Il permet aussi d'explorer le schéma d'une base et d'auditer sa sécurité, ses performances et la qualité de ses données — propulsé par n'importe quel LLM, connecté à n'importe quelle base de données.
 
 **Promesse centrale** :
 - Un utilisateur sans connaissance SQL doit pouvoir répondre à ses questions métier
@@ -182,9 +182,9 @@ QDRANT_URL=http://localhost:6333
 QDRANT_API_KEY=                           # Seulement pour Qdrant Cloud
 
 # Base de l'application
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost/dbia
+DATABASE_URL=postgresql+asyncpg://user:pass@localhost/datachat
 # ou pour le dev local :
-# DATABASE_URL=sqlite+aiosqlite:///./dbia.db
+# DATABASE_URL=sqlite+aiosqlite:///./datachat.db
 
 # Sécurité
 SECRET_KEY=                               # Chiffrement credentials DB stockés

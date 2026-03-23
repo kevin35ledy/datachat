@@ -21,7 +21,7 @@ export function Sidebar() {
       <div className="px-4 py-4 border-b border-gray-800">
         <div className="flex items-center gap-2">
           <Database className="text-brand-500" size={20} />
-          <span className="font-semibold text-gray-100 text-sm">DB-IA</span>
+          <span className="font-semibold text-gray-100 text-sm">DataChat</span>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function Sidebar() {
 
       {/* Footer */}
       <div className="px-4 py-3 border-t border-gray-800">
-        <p className="text-xs text-gray-600">DB-IA v0.1.0</p>
+        <p className="text-xs text-gray-600">DataChat v0.1.0</p>
       </div>
     </aside>
   )

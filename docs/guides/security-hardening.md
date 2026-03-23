@@ -13,7 +13,7 @@ curl -fsSL https://ollama.ai/install.sh | sh
 # Télécharger un modèle orienté SQL
 ollama pull sqlcoder
 
-# Configurer DB-IA pour utiliser Ollama
+# Configurer DataChat pour utiliser Ollama
 LITELLM_DEFAULT_MODEL=ollama/sqlcoder
 OLLAMA_API_BASE=http://localhost:11434
 ```
@@ -22,16 +22,16 @@ OLLAMA_API_BASE=http://localhost:11434
 
 ```sql
 -- PostgreSQL
-CREATE USER dbia_query WITH PASSWORD 'mot_de_passe_fort';
-GRANT CONNECT ON DATABASE production TO dbia_query;
-GRANT USAGE ON SCHEMA public TO dbia_query;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbia_query;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO dbia_query;
+CREATE USER datachat_query WITH PASSWORD 'mot_de_passe_fort';
+GRANT CONNECT ON DATABASE production TO datachat_query;
+GRANT USAGE ON SCHEMA public TO datachat_query;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO datachat_query;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO datachat_query;
 -- IMPORTANT: ne jamais donner SUPERUSER, CREATEDB, CREATEROLE
 
 -- MySQL
-CREATE USER 'dbia_query'@'app_host' IDENTIFIED BY 'mot_de_passe_fort';
-GRANT SELECT ON production.* TO 'dbia_query'@'app_host';
+CREATE USER 'datachat_query'@'app_host' IDENTIFIED BY 'mot_de_passe_fort';
+GRANT SELECT ON production.* TO 'datachat_query'@'app_host';
 FLUSH PRIVILEGES;
 ```
 
@@ -80,7 +80,7 @@ MAX_QUERY_ROWS=100                    # Défaut: 1000
 ```bash
 # Activer les logs d'audit structurés
 AUDIT_LOG_ENABLED=true
-AUDIT_LOG_PATH=/var/log/dbia/audit.jsonl
+AUDIT_LOG_PATH=/var/log/datachat/audit.jsonl
 
 # Chaque log inclura :
 # - timestamp
@@ -111,8 +111,8 @@ AUDIT_LOG_PATH=/var/log/dbia/audit.jsonl
 # Reverse proxy nginx
 server {
     listen 443 ssl;
-    ssl_certificate /etc/ssl/dbia.crt;
-    ssl_certificate_key /etc/ssl/dbia.key;
+    ssl_certificate /etc/ssl/datachat.crt;
+    ssl_certificate_key /etc/ssl/datachat.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
 
@@ -138,7 +138,7 @@ JWT_SECRET=<64 bytes hex>
 JWT_EXPIRY_MINUTES=480           # 8 heures (pas de tokens qui expirent jamais)
 
 # DB de l'app
-DATABASE_URL=postgresql+asyncpg://dbia_app:xxx@db:5432/dbia?ssl=require
+DATABASE_URL=postgresql+asyncpg://datachat_app:xxx@db:5432/datachat?ssl=require
 
 # Limites de sécurité
 MAX_QUERY_ROWS=500

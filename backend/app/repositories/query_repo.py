@@ -14,7 +14,7 @@ class QueryRepository:
     """Stores query history as JSONL files per connection. Phase 1 implementation."""
 
     def __init__(self, settings: "Settings"):
-        self._store_dir = Path(".dbia_history")
+        self._store_dir = Path(".datachat_history")
         self._store_dir.mkdir(exist_ok=True)
 
     def _path(self, connection_id: str) -> Path:

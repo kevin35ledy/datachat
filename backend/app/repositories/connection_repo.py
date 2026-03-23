@@ -17,7 +17,7 @@ class ConnectionRepository:
 
     def __init__(self, settings: "Settings"):
         self._settings = settings
-        self._store_dir = Path(".dbia_connections")
+        self._store_dir = Path(".datachat_connections")
         self._store_dir.mkdir(exist_ok=True)
 
     def _path(self, conn_id: str) -> Path:

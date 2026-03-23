@@ -33,6 +33,6 @@ export const useConnectionStore = create<ConnectionStore>()(
         return get().connections.find((c) => c.id === get().activeConnectionId)
       },
     }),
-    { name: 'db-ia-connections' }
+    { name: 'datachat-connections' }
   )
 )

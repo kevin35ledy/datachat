@@ -64,7 +64,7 @@ Limitations :
 
 ## Stratégie multi-modèles
 
-DB-IA peut utiliser **différents modèles pour différentes tâches** dans le même pipeline :
+DataChat peut utiliser **différents modèles pour différentes tâches** dans le même pipeline :
 
 ```python
 # Configuration recommandée pour optimiser coût/qualité

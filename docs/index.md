@@ -1,12 +1,12 @@
-# DB-IA — Documentation
+# DataChat — Documentation
 
-Bienvenue dans la documentation de **DB-IA**, l'interface en langage naturel pour bases de données propulsée par LLM.
+Bienvenue dans la documentation de **DataChat**, l'interface en langage naturel pour bases de données propulsée par LLM.
 
 ## Navigation rapide
 
 | Section | Description |
 |---------|-------------|
-| [Démarrage rapide](guides/quick-start.md) | Installer et lancer DB-IA en 5 minutes |
+| [Démarrage rapide](guides/quick-start.md) | Installer et lancer DataChat en 5 minutes |
 | [Architecture](architecture/overview.md) | Vue d'ensemble technique du système |
 | [Pipeline NL→SQL](technical/nl2sql-pipeline.md) | Les 10 étapes de la traduction NL vers SQL |
 | [Connecteurs DB](technical/database-connectors.md) | Sources de données supportées |
@@ -15,9 +15,9 @@ Bienvenue dans la documentation de **DB-IA**, l'interface en langage naturel pou
 | [Exigences métier](business/requirements.md) | Fonctionnalités et critères d'acceptation |
 | [Roadmap](business/feature-roadmap.md) | Phases de développement |
 
-## Qu'est-ce que DB-IA ?
+## Qu'est-ce que DataChat ?
 
-DB-IA est une application web qui permet à n'importe quel utilisateur d'interroger une base de données en langage naturel — sans écrire de SQL. Un analyste peut poser une question en français, DB-IA génère et exécute la requête sécurisée, et retourne les résultats sous forme de tableau ou graphique.
+DataChat est une application web qui permet à n'importe quel utilisateur d'interroger une base de données en langage naturel — sans écrire de SQL. Un analyste peut poser une question en français, DataChat génère et exécute la requête sécurisée, et retourne les résultats sous forme de tableau ou graphique.
 
 ### Fonctionnalités principales
 

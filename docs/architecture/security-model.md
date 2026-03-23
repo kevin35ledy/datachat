@@ -2,7 +2,7 @@
 
 ## Principes généraux
 
-DB-IA applique la défense en profondeur : plusieurs couches de sécurité indépendantes, de sorte qu'une seule défaillance ne compromet pas le système. Aucune requête générée par un LLM ne peut modifier ou supprimer des données, même si le LLM est manipulé.
+DataChat applique la défense en profondeur : plusieurs couches de sécurité indépendantes, de sorte qu'une seule défaillance ne compromet pas le système. Aucune requête générée par un LLM ne peut modifier ou supprimer des données, même si le LLM est manipulé.
 
 ## Modèle de menaces
 
@@ -25,11 +25,11 @@ Toutes les 5 couches doivent être contournées simultanément pour réussir l'a
 **Configuration recommandée pour le user de connexion DB** :
 ```sql
 -- PostgreSQL — créer un user limité en lecture
-CREATE USER dbia_query WITH PASSWORD 'xxx';
-GRANT CONNECT ON DATABASE mydb TO dbia_query;
-GRANT USAGE ON SCHEMA public TO dbia_query;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbia_query;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO dbia_query;
+CREATE USER datachat_query WITH PASSWORD 'xxx';
+GRANT CONNECT ON DATABASE mydb TO datachat_query;
+GRANT USAGE ON SCHEMA public TO datachat_query;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO datachat_query;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO datachat_query;
 ```
 
 ### Menace 2 : Hallucination LLM (résultats incorrects)
@@ -106,7 +106,7 @@ Accès bloqué aux préfixes/schémas :
 
 ```bash
 # DB user avec SELECT uniquement
-DATABASE_QUERY_URL=postgresql://dbia_query:xxx@localhost/mydb
+DATABASE_QUERY_URL=postgresql://datachat_query:xxx@localhost/mydb
 
 # Pas de chiffrement des credentials (dev)
 SECRET_KEY=dev-not-secret-key
@@ -116,7 +116,7 @@ SECRET_KEY=dev-not-secret-key
 
 ```bash
 # User SELECT-only, connexion SSL obligatoire
-DATABASE_QUERY_URL=postgresql://dbia_query:xxx@db:5432/mydb?sslmode=require
+DATABASE_QUERY_URL=postgresql://datachat_query:xxx@db:5432/mydb?sslmode=require
 
 # Clé forte générée aléatoirement
 SECRET_KEY=<64 bytes random hex>
@@ -151,7 +151,7 @@ Internet
 
 ## Audit de sécurité de l'application
 
-DB-IA elle-même peut être auditée par les outils qu'elle fournit — mais plus important, ces pratiques doivent être suivies :
+DataChat elle-même peut être auditée par les outils qu'elle fournit — mais plus important, ces pratiques doivent être suivies :
 
 - **Rotation des clés** : `SECRET_KEY` et `JWT_SECRET` doivent être rotés régulièrement
 - **Logs d'accès** : toutes les requêtes NL, SQL générés, et résultats sont loggés (sans les credentials)

@@ -1,7 +1,7 @@
 [project]
-name = "db-ia-backend"
+name = "datachat-backend"
 version = "0.1.0"
-description = "DB-IA backend — LLM-powered database interface"
+description = "DataChat backend — LLM-powered database interface"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.111.0",

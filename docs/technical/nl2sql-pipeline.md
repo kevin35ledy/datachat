@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Le pipeline NL→SQL est le cœur de DB-IA. Il transforme une question en langage naturel en résultats de base de données. Voir [architecture/data-flow.md](../architecture/data-flow.md) pour le diagramme de séquence.
+Le pipeline NL→SQL est le cœur de DataChat. Il transforme une question en langage naturel en résultats de base de données. Voir [architecture/data-flow.md](../architecture/data-flow.md) pour le diagramme de séquence.
 
 ## Étape 1 — Schema RAG
 

@@ -137,7 +137,7 @@
 
 ## Backlog (post-Phase 4)
 
-- **API publique** : permettre aux développeurs d'intégrer DB-IA dans leurs outils via API
+- **API publique** : permettre aux développeurs d'intégrer DataChat dans leurs outils via API
 - **Plugins de connecteurs** : système de plugins pour que la communauté ajoute des connecteurs
 - **Requêtes planifiées** : planifier des requêtes récurrentes et recevoir les résultats par email
 - **Dashboards** : épingler des résultats de requêtes pour créer des dashboards dynamiques
