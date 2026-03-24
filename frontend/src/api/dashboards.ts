@@ -4,7 +4,10 @@ import type {
   DashboardCreate,
   DashboardUpdate,
   AddWidgetRequest,
+  AddWidgetResponse,
+  RegenerateWidgetRequest,
   DashboardRefreshResult,
+  WidgetConfig,
 } from './types'
 
 export const dashboardsApi = {
@@ -23,7 +26,7 @@ export const dashboardsApi = {
   delete: (id: string): Promise<void> =>
     apiClient.delete(`/dashboards/${id}`).then(() => undefined),
 
-  addWidgetFromNL: (id: string, payload: AddWidgetRequest): Promise<Dashboard> =>
+  addWidgetFromNL: (id: string, payload: AddWidgetRequest): Promise<AddWidgetResponse> =>
     apiClient.post(`/dashboards/${id}/widgets/from-nl`, payload).then(r => r.data),
 
   removeWidget: (dashboardId: string, widgetId: string): Promise<Dashboard> =>
@@ -31,4 +34,10 @@ export const dashboardsApi = {
 
   refresh: (id: string): Promise<DashboardRefreshResult> =>
     apiClient.post(`/dashboards/${id}/refresh`).then(r => r.data),
+
+  regenerateWidget: (dashboardId: string, widgetId: string, payload: RegenerateWidgetRequest): Promise<AddWidgetResponse> =>
+    apiClient.post(`/dashboards/${dashboardId}/widgets/${widgetId}/regenerate`, payload).then(r => r.data),
+
+  updateWidgetConfig: (dashboardId: string, widgetId: string, config: WidgetConfig): Promise<Dashboard> =>
+    apiClient.patch(`/dashboards/${dashboardId}/widgets/${widgetId}/config`, config).then(r => r.data),
 }

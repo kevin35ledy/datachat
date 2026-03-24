@@ -2,7 +2,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from typing import Literal, TYPE_CHECKING
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class WidgetType(str):
@@ -12,8 +12,14 @@ class WidgetType(str):
     text = "text"
 
 
-WIDGET_TYPES = Literal["chart", "table", "kpi", "text"]
+WIDGET_TYPES = Literal["chart", "table", "kpi", "text", "pivot"]
 CHART_TYPES = Literal["bar", "line", "scatter", "pie", "bar_grouped", "area"]
+
+
+class PivotAggregation(BaseModel):
+    field: str
+    agg: str = "sum"   # sum|count|avg|min|max
+    label: str = ""    # custom label; empty = auto-generated on frontend
 
 
 class WidgetConfig(BaseModel):
@@ -22,6 +28,38 @@ class WidgetConfig(BaseModel):
     y_columns: list[str] = Field(default_factory=list)
     color: str | None = None
     title: str = ""
+    inferred: bool = False  # True when config was built from heuristics, not from a clear chart suggestion
+    # Pivot (TCD) config
+    pivot_row_cols: list[str] = Field(default_factory=list)
+    pivot_col_cols: list[str] = Field(default_factory=list)
+    pivot_aggregations: list[PivotAggregation] = Field(default_factory=list)
+    # Deprecated — kept for backward-compat migration only
+    pivot_value_cols: list[str] = Field(default_factory=list)
+    pivot_agg: str = "sum"
+
+    @model_validator(mode='before')
+    @classmethod
+    def _migrate_pivot_fields(cls, data: object) -> object:
+        if not isinstance(data, dict):
+            return data
+        # v1 singular → v2 plural arrays
+        for old, new in [
+            ('pivot_row_col',   'pivot_row_cols'),
+            ('pivot_col_col',   'pivot_col_cols'),
+            ('pivot_value_col', 'pivot_value_cols'),
+        ]:
+            if old in data and not data.get(new):
+                val = data[old]
+                if val:
+                    data[new] = [val]
+        # v2 pivot_value_cols → v3 pivot_aggregations
+        if not data.get('pivot_aggregations') and data.get('pivot_value_cols'):
+            agg_type = data.get('pivot_agg', 'sum')
+            data['pivot_aggregations'] = [
+                {'field': vc, 'agg': agg_type, 'label': ''}
+                for vc in data['pivot_value_cols']
+            ]
+        return data
 
 
 class DashboardWidget(BaseModel):
@@ -62,6 +100,11 @@ class DashboardUpdate(BaseModel):
 class AddWidgetRequest(BaseModel):
     nl_text: str
     widget_type: WIDGET_TYPES = "chart"
+
+
+class AddWidgetResponse(BaseModel):
+    dashboard: "Dashboard"
+    warnings: list[str] = Field(default_factory=list)
 
 
 class WidgetRefreshResult(BaseModel):

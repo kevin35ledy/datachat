@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { connectionsApi } from '../api/connections'
 import { useConnectionStore } from '../stores/connectionStore'
 import type { ConnectionCreate } from '../api/types'
-import { Plus, Trash2, Zap, CheckCircle, XCircle, Loader } from 'lucide-react'
+import { Plus, Trash2, Zap, CheckCircle, XCircle, Loader, Tag } from 'lucide-react'
 import clsx from 'clsx'
 
 export function ConnectionsPage() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [showForm, setShowForm] = useState(false)
   const { setConnections, addConnection, removeConnection, setActiveConnection, activeConnectionId } =
     useConnectionStore()
@@ -93,6 +95,13 @@ export function ConnectionsPage() {
                   <CheckCircle size={12} /> Active
                 </span>
               )}
+              <button
+                onClick={(e) => { e.stopPropagation(); navigate(`/connections/${conn.id}/annotate`) }}
+                className="text-gray-500 hover:text-brand-400 transition-colors"
+                title="Annoter le schéma"
+              >
+                <Tag size={14} />
+              </button>
               <TestButton connId={conn.id} />
               <button
                 onClick={(e) => { e.stopPropagation(); deleteMutation.mutate(conn.id) }}

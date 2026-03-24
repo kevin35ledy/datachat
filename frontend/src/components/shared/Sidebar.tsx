@@ -1,7 +1,14 @@
 import { NavLink } from 'react-router-dom'
 import { MessageSquare, Database, Plug, LayoutDashboard } from 'lucide-react'
 import { useConnectionStore } from '../../stores/connectionStore'
+import { useThemeStore, type Theme } from '../../stores/themeStore'
 import clsx from 'clsx'
+
+const THEMES: { id: Theme; color: string; label: string }[] = [
+  { id: 'cyan',   color: '#0ea5e9', label: 'Cyan' },
+  { id: 'violet', color: '#a855f7', label: 'Violet' },
+  { id: 'amber',  color: '#f59e0b', label: 'Ambre' },
+]
 
 const navItems = [
   { to: '/chat', icon: MessageSquare, label: 'Chat' },
@@ -11,6 +18,7 @@ const navItems = [
 
 export function Sidebar() {
   const { connections, activeConnectionId, setActiveConnection } = useConnectionStore()
+  const { theme, setTheme } = useThemeStore()
 
   return (
     <aside
@@ -65,8 +73,27 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
+      {/* Theme selector */}
       <div className="px-4 py-3 border-t border-gray-800">
+        <p className="text-xs text-gray-600 mb-2">Thème</p>
+        <div className="flex gap-2">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTheme(t.id)}
+              title={t.label}
+              className={clsx(
+                'w-5 h-5 rounded-full transition-all',
+                theme === t.id && 'ring-2 ring-offset-2 ring-offset-gray-900 ring-white'
+              )}
+              style={{ backgroundColor: t.color }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="px-4 py-2 border-t border-gray-800">
         <p className="text-xs text-gray-600">DataChat v0.1.0</p>
       </div>
     </aside>

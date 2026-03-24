@@ -77,8 +77,9 @@ class NL2SQLService:
 
         # Step 3: LLM generation
         try:
-            log.info("nl2sql_generating", query=nl_query.text[:100])
+            log.info("llm_request_sent", query=nl_query.text)
             llm_response = await self._llm.complete(request)
+            log.debug("llm_raw_response", content=llm_response.content)
         except Exception as e:
             log.error("nl2sql_llm_error", error=str(e))
             return ChatResponse(
@@ -90,6 +91,7 @@ class NL2SQLService:
         # Step 4: Extract SQL
         try:
             raw_sql = SQLValidator.extract_sql(llm_response.content)
+            log.info("sql_extracted", sql=raw_sql)
         except SQLExtractionError as e:
             return ChatResponse(
                 session_id=nl_query.session_id,
@@ -108,6 +110,7 @@ class NL2SQLService:
                 dialect=connector.dialect,
                 schema_info=schema_info,
             )
+            log.info("sql_validated", validated_sql=validated_sql)
         except (SQLSecurityError, SQLValidationError) as e:
             log.warning("nl2sql_validation_failed", error=str(e), sql=raw_sql[:200])
             return ChatResponse(
@@ -146,7 +149,12 @@ class NL2SQLService:
 
         # Step 10: Format
         result = self._formatter.format(result)
-        chart = self._formatter.infer_chart(result)
+        chart = self._formatter.infer_chart(result, nl_text=nl_query.text)
+        log.debug("chart_suggestion",
+            type=chart.type if chart else None,
+            x=chart.x_column if chart else None,
+            y=chart.y_columns if chart else None,
+        )
 
         # Generate NL summary (lightweight — use a fast model)
         summary = await self._summarize(nl_query.text, validated_sql, result)

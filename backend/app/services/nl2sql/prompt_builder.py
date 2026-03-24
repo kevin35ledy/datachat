@@ -1,9 +1,12 @@
 from __future__ import annotations
+import structlog
 from typing import TYPE_CHECKING
 from app.core.models.chat import ChatMessage, LLMRequest
 
 if TYPE_CHECKING:
     from app.core.models.schema import SchemaInfo
+
+logger = structlog.get_logger()
 
 # Token budget allocations for different sections of the prompt
 TOKEN_BUDGET = {
@@ -71,7 +74,18 @@ class PromptBuilder:
         # Current user query
         messages.append({"role": "user", "content": nl_query})
 
-        return LLMRequest(messages=messages, temperature=0.1, max_tokens=1000)
+        request = LLMRequest(messages=messages, temperature=0.1, max_tokens=1000)
+
+        logger.debug("prompt_built",
+            dialect=dialect,
+            db=schema_info.database_name,
+            history_msgs=len(messages) - 2,
+            schema_chars=len(schema_context),
+        )
+        logger.debug("prompt_system", content=messages[0]["content"])
+        logger.debug("prompt_user", content=nl_query)
+
+        return request
 
     def _trim_history(self, history: list[ChatMessage], max_turns: int = 6) -> list[ChatMessage]:
         """Keep the last max_turns messages (user+assistant pairs)."""

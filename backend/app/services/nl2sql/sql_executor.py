@@ -44,7 +44,9 @@ class SQLExecutor:
         )
 
         log = logger.bind(dialect=connector.dialect)
-        log.debug("sql_executing", sql=safe_sql[:200])
+        if safe_sql != validated_sql:
+            log.info("sql_limit_injected", max_rows=self._settings.max_query_rows)
+        log.debug("sql_executing", sql=safe_sql)
 
         try:
             result = await connector.execute_query(

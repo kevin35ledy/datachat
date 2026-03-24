@@ -30,18 +30,38 @@ interface Props {
 }
 
 export function ChartWidget({ result, config }: Props) {
-  if (!config.chart_type) {
-    return <div className="flex items-center justify-center h-full text-gray-500 text-sm">Configuration manquante</div>
-  }
-
   const data = result.rows as Record<string, unknown>[]
-  const xKey = config.x_column ?? result.columns[0]?.name ?? ''
+
+  // Auto-detect chart config from result shape when backend didn't suggest one
+  const chartType = config.chart_type ?? 'bar'
+
+  // isNumericValue: true for JS numbers and numeric strings (handles all DB serializations)
+  const isNumericValue = (v: unknown): boolean =>
+    typeof v === 'number' || (typeof v === 'string' && v !== '' && !isNaN(Number(v)))
+
+  // xKey: prefer config, then first non-numeric column, then first column
+  const xKey = config.x_column
+    ?? result.columns.find(c => c.type_category === 'text' || c.type_category === 'date' || c.type_category === 'unknown')?.name
+    ?? result.columns.find(c => !isNumericValue(data[0]?.[c.name]))?.name
+    ?? result.columns[0]?.name
+    ?? ''
+
+  // yKeys: prefer config, then any column (except xKey) whose first value looks numeric
   const yKeys = config.y_columns.length > 0
     ? config.y_columns
-    : result.columns.filter(c => c.name !== xKey && c.type_category === 'numeric').map(c => c.name)
+    : result.columns
+        .filter(c => c.name !== xKey && (
+          c.type_category === 'numeric' ||
+          isNumericValue(data[0]?.[c.name])
+        ))
+        .map(c => c.name)
 
   if (data.length === 0) {
     return <div className="flex items-center justify-center h-full text-gray-500 text-sm">Aucune donnée</div>
+  }
+
+  if (yKeys.length === 0) {
+    return <div className="flex items-center justify-center h-full text-gray-500 text-sm">Aucune colonne numérique détectée</div>
   }
 
   const common = (
@@ -56,7 +76,7 @@ export function ChartWidget({ result, config }: Props) {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      {config.chart_type === 'pie' ? (
+      {chartType === 'pie' ? (
         <PieChart>
           <Pie
             data={data}
@@ -75,7 +95,7 @@ export function ChartWidget({ result, config }: Props) {
           <Tooltip {...TOOLTIP_STYLE} formatter={(v) => [fmt(v), '']} />
           <Legend wrapperStyle={{ fontSize: 11, color: '#9ca3af' }} />
         </PieChart>
-      ) : config.chart_type === 'scatter' ? (
+      ) : chartType === 'scatter' ? (
         <ScatterChart>
           <CartesianGrid {...GRID_STYLE} />
           <ScatterX dataKey={xKey} tick={AXIS_STYLE} />
@@ -83,14 +103,14 @@ export function ChartWidget({ result, config }: Props) {
           <Tooltip {...TOOLTIP_STYLE} />
           <Scatter data={data} fill={COLORS[0]} />
         </ScatterChart>
-      ) : config.chart_type === 'line' ? (
+      ) : chartType === 'line' ? (
         <LineChart data={data}>
           {common}
           {yKeys.map((k, i) => (
             <Line key={k} type="monotone" dataKey={k} stroke={COLORS[i % COLORS.length]} dot={false} strokeWidth={2} />
           ))}
         </LineChart>
-      ) : config.chart_type === 'area' ? (
+      ) : chartType === 'area' ? (
         <AreaChart data={data}>
           {common}
           {yKeys.map((k, i) => (

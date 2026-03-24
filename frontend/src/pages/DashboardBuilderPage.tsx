@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Eye, Check } from 'lucide-react'
 import { dashboardsApi } from '../api/dashboards'
+import { connectionsApi } from '../api/connections'
 import { useDashboardStore } from '../stores/dashboardStore'
 import { DashboardGrid } from '../components/dashboard/DashboardGrid'
 import { AddWidgetPanel } from '../components/dashboard/AddWidgetPanel'
-import type { Dashboard, DashboardWidget, QueryResult, WidgetType } from '../api/types'
+import type { Dashboard, DashboardWidget, QueryResult, WidgetType, WidgetConfig } from '../api/types'
 
 export function DashboardBuilderPage() {
   const { dashboardId } = useParams<{ dashboardId: string }>()
@@ -16,6 +17,8 @@ export function DashboardBuilderPage() {
 
   const [isAddingWidget, setIsAddingWidget] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [widgetWarnings, setWidgetWarnings] = useState<string[]>([])
+  const [widgetRegenerating, setWidgetRegenerating] = useState<Record<string, boolean>>({})
 
   const { data: dashboard, isLoading } = useQuery({
     queryKey: ['dashboard', dashboardId],
@@ -49,8 +52,10 @@ export function DashboardBuilderPage() {
   const handleAddWidget = async (nlText: string, widgetType: WidgetType) => {
     if (!dashboardId) return
     setIsAddingWidget(true)
+    setWidgetWarnings([])
     try {
-      const updated = await dashboardsApi.addWidgetFromNL(dashboardId, { nl_text: nlText, widget_type: widgetType })
+      const { dashboard: updated, warnings } = await dashboardsApi.addWidgetFromNL(dashboardId, { nl_text: nlText, widget_type: widgetType })
+      setWidgetWarnings(warnings)
       qc.setQueryData(['dashboard', dashboardId], updated)
 
       // Refresh only the new widget
@@ -98,6 +103,31 @@ export function DashboardBuilderPage() {
     const updated = await dashboardsApi.update(dashboardId, { widgets: reordered })
     qc.setQueryData(['dashboard', dashboardId], updated)
     flashSaved()
+  }
+
+  const handleConfigChange = async (widgetId: string, config: WidgetConfig) => {
+    if (!dashboardId) return
+    const updated = await dashboardsApi.updateWidgetConfig(dashboardId, widgetId, config)
+    qc.setQueryData(['dashboard', dashboardId], updated)
+  }
+
+  const handleRegenerateWidget = async (widgetId: string, nlText: string) => {
+    if (!dashboardId) return
+    setWidgetRegenerating(prev => ({ ...prev, [widgetId]: true }))
+    try {
+      const { dashboard: updated, warnings } = await dashboardsApi.regenerateWidget(dashboardId, widgetId, { nl_text: nlText })
+      setWidgetWarnings(warnings)
+      qc.setQueryData(['dashboard', dashboardId], updated)
+      const refreshed = await dashboardsApi.refresh(dashboardId)
+      for (const r of refreshed.results) {
+        if (r.widget_id === widgetId) {
+          setWidgetResult(r.widget_id, r.error ?? r.result ?? 'Aucun résultat')
+        }
+      }
+      flashSaved()
+    } finally {
+      setWidgetRegenerating(prev => ({ ...prev, [widgetId]: false }))
+    }
   }
 
   const handleResizeWidget = async (widgetId: string, newWidth: 1 | 2 | 3) => {
@@ -148,7 +178,13 @@ export function DashboardBuilderPage() {
       <div className="flex flex-1 min-h-0">
         {/* Sidebar */}
         <div className="w-72 shrink-0 border-r border-gray-800 p-4 overflow-y-auto">
-          <AddWidgetPanel onAdd={handleAddWidget} isLoading={isAddingWidget} />
+          <AddWidgetPanel
+            connectionId={dashboard.connection_id}
+            onAdd={handleAddWidget}
+            onClarify={(nlText) => connectionsApi.clarify(dashboard.connection_id, nlText).then(r => r.questions)}
+            isLoading={isAddingWidget}
+            warnings={widgetWarnings}
+          />
 
           {dashboard.widgets.length > 0 && (
             <div className="mt-6">
@@ -175,10 +211,13 @@ export function DashboardBuilderPage() {
             widgets={dashboard.widgets}
             widgetResults={widgetResults}
             widgetLoading={widgetLoading}
+            widgetRegenerating={widgetRegenerating}
             isEditing
             onDeleteWidget={handleDeleteWidget}
             onMoveWidget={handleMoveWidget}
             onResizeWidget={handleResizeWidget}
+            onRegenerateWidget={handleRegenerateWidget}
+            onConfigChange={handleConfigChange}
           />
         </div>
       </div>

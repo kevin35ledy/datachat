@@ -1,5 +1,6 @@
 from __future__ import annotations
 import re
+import structlog
 from typing import TYPE_CHECKING
 import sqlglot
 import sqlglot.expressions as exp
@@ -7,6 +8,8 @@ from app.core.exceptions import SQLValidationError, SQLSecurityError, SQLExtract
 
 if TYPE_CHECKING:
     from app.core.models.schema import SchemaInfo
+
+logger = structlog.get_logger()
 
 
 # Statement types that are explicitly allowed
@@ -66,6 +69,7 @@ class SQLValidator:
             ast = sqlglot.parse_one(sql, dialect=dialect, error_level=sqlglot.ErrorLevel.RAISE)
         except sqlglot.errors.ParseError as e:
             raise SQLValidationError(f"SQL syntax error: {e}") from e
+        logger.debug("sql_parse_ok", stmt_type=type(ast).__name__, dialect=dialect)
 
         # Step 2: Whitelist — only SELECT allowed
         if not isinstance(ast, ALLOWED_STATEMENT_TYPES):
@@ -73,9 +77,11 @@ class SQLValidator:
             raise SQLSecurityError(
                 f"Statement type '{stmt_type}' is not allowed. Only SELECT statements can be executed."
             )
+        logger.debug("sql_whitelist_ok")
 
         # Step 3: Block system tables
-        for table in ast.find_all(exp.Table):
+        all_tables = list(ast.find_all(exp.Table))
+        for table in all_tables:
             table_ref = table.name or ""
             db_ref = (table.db or "") + "." + table_ref if table.db else table_ref
             for pattern in BLOCKED_TABLE_PATTERNS:
@@ -83,12 +89,14 @@ class SQLValidator:
                     raise SQLSecurityError(
                         f"Access to system table '{db_ref or table_ref}' is not permitted."
                     )
+        logger.debug("sql_system_tables_ok", tables_checked=len(all_tables))
 
         # Step 4: Block dangerous functions
         for func in ast.find_all(exp.Anonymous):
             fname = (func.name or "").upper()
             if fname in {"PG_READ_FILE", "PG_LS_DIR", "PG_EXEC", "LOAD_FILE", "SYSTEM"}:
                 raise SQLSecurityError(f"Function '{fname}' is not permitted.")
+        logger.debug("sql_functions_ok")
 
         # Step 5: Validate table references against known schema (if provided)
         if schema_info is not None:
@@ -99,12 +107,14 @@ class SQLValidator:
                         f"Table '{table.name}' does not exist in the connected database. "
                         f"Available tables: {sorted(known_tables)[:10]}"
                     )
+            logger.debug("sql_schema_refs_ok", known_tables=len(known_tables))
 
         # Step 6: Transpile to target dialect (normalizes quirks)
         try:
             normalized = sqlglot.transpile(sql, read=dialect, write=dialect, pretty=True)[0]
         except Exception:
             normalized = sql  # Keep original if transpilation fails
+        logger.debug("sql_transpiled", original_chars=len(sql), normalized_chars=len(normalized))
 
         return normalized
 

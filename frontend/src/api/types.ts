@@ -34,6 +34,7 @@ export interface ColumnMeta {
   type_name: string
   type_category: 'text' | 'numeric' | 'date' | 'boolean' | 'json' | 'unknown'
   nullable: boolean
+  inferred?: boolean
 }
 
 export interface QueryResult {
@@ -91,6 +92,8 @@ export interface SchemaColumn {
   nullable: boolean
   is_primary_key: boolean
   is_foreign_key: boolean
+  comment: string
+  possible_values: string[]
 }
 
 export interface SchemaTable {
@@ -108,7 +111,13 @@ export interface SchemaInfo {
 
 // --- Dashboard types ---
 
-export type WidgetType = 'chart' | 'table' | 'kpi' | 'text'
+export interface PivotAggregation {
+  field: string
+  agg: string       // sum|count|avg|min|max
+  label?: string    // custom label; auto-generated if empty
+}
+
+export type WidgetType = 'chart' | 'table' | 'kpi' | 'text' | 'pivot'
 export type ChartType = 'bar' | 'line' | 'scatter' | 'pie' | 'bar_grouped' | 'area'
 
 export interface WidgetConfig {
@@ -117,6 +126,14 @@ export interface WidgetConfig {
   y_columns: string[]
   color: string | null
   title: string
+  inferred?: boolean
+  // Pivot config
+  pivot_row_cols?: string[]
+  pivot_col_cols?: string[]
+  pivot_aggregations?: PivotAggregation[]
+  // deprecated — kept for backward-compat migration
+  pivot_value_cols?: string[]
+  pivot_agg?: string
 }
 
 export interface DashboardWidget {
@@ -159,6 +176,11 @@ export interface AddWidgetRequest {
   widget_type?: WidgetType
 }
 
+export interface AddWidgetResponse {
+  dashboard: Dashboard
+  warnings: string[]
+}
+
 export interface WidgetRefreshResult {
   widget_id: string
   result: QueryResult | null
@@ -168,4 +190,39 @@ export interface WidgetRefreshResult {
 export interface DashboardRefreshResult {
   dashboard_id: string
   results: WidgetRefreshResult[]
+}
+
+export interface RegenerateWidgetRequest {
+  nl_text: string
+}
+
+// --- Annotation types ---
+
+export interface ColumnAnnotation {
+  description: string
+  possible_values: string[]
+}
+
+export interface TableAnnotation {
+  description: string
+  columns: Record<string, ColumnAnnotation>
+}
+
+export interface SchemaAnnotations {
+  conn_id: string
+  tables: Record<string, TableAnnotation>
+  updated_at: string
+}
+
+// --- Clarification types ---
+
+export interface ClarificationQuestion {
+  id: string
+  question: string
+  context: string
+  suggestions: string[]
+}
+
+export interface ClarificationResponse {
+  questions: ClarificationQuestion[]
 }

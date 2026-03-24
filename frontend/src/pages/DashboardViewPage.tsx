@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Edit2, RefreshCw, ArrowLeft } from 'lucide-react'
 import { dashboardsApi } from '../api/dashboards'
 import { useDashboardStore } from '../stores/dashboardStore'
 import { DashboardGrid } from '../components/dashboard/DashboardGrid'
-import type { QueryResult } from '../api/types'
+import type { QueryResult, WidgetConfig } from '../api/types'
 
 export function DashboardViewPage() {
   const { dashboardId } = useParams<{ dashboardId: string }>()
   const navigate = useNavigate()
   const { widgetResults, widgetLoading, setAllWidgetResults } = useDashboardStore()
+  const qc = useQueryClient()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const { data: dashboard, isLoading } = useQuery({
@@ -90,6 +91,10 @@ export function DashboardViewPage() {
         widgetResults={widgetResults}
         widgetLoading={widgetLoading}
         isEditing={false}
+        onConfigChange={async (widgetId: string, config: WidgetConfig) => {
+          const updated = await dashboardsApi.updateWidgetConfig(dashboardId!, widgetId, config)
+          qc.setQueryData(['dashboard', dashboardId], updated)
+        }}
       />
     </div>
   )

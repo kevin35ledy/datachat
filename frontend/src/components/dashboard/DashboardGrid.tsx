@@ -1,4 +1,4 @@
-import type { DashboardWidget, QueryResult } from '../../api/types'
+import type { DashboardWidget, QueryResult, WidgetConfig } from '../../api/types'
 import { Widget } from './Widget'
 
 const COL_SPAN: Record<1 | 2 | 3, string> = {
@@ -11,13 +11,16 @@ interface Props {
   widgets: DashboardWidget[]
   widgetResults: Record<string, QueryResult | string>
   widgetLoading: Record<string, boolean>
+  widgetRegenerating?: Record<string, boolean>
   isEditing?: boolean
   onDeleteWidget?: (id: string) => void
   onMoveWidget?: (id: string, dir: 'up' | 'down') => void
   onResizeWidget?: (id: string, width: 1 | 2 | 3) => void
+  onRegenerateWidget?: (id: string, nlText: string) => void
+  onConfigChange?: (id: string, config: WidgetConfig) => void
 }
 
-export function DashboardGrid({ widgets, widgetResults, widgetLoading, isEditing, onDeleteWidget, onMoveWidget, onResizeWidget }: Props) {
+export function DashboardGrid({ widgets, widgetResults, widgetLoading, widgetRegenerating, isEditing, onDeleteWidget, onMoveWidget, onResizeWidget, onRegenerateWidget, onConfigChange }: Props) {
   const sorted = [...widgets].sort((a, b) => a.position - b.position)
 
   if (sorted.length === 0) {
@@ -43,11 +46,14 @@ export function DashboardGrid({ widgets, widgetResults, widgetLoading, isEditing
               result={result}
               error={error}
               isLoading={widgetLoading[widget.id] ?? false}
+              isRegenerating={widgetRegenerating?.[widget.id] ?? false}
               isEditing={isEditing}
               onDelete={onDeleteWidget}
               onMoveUp={(id) => onMoveWidget?.(id, 'up')}
               onMoveDown={(id) => onMoveWidget?.(id, 'down')}
               onResizeWidth={onResizeWidget}
+              onRegenerate={onRegenerateWidget}
+              onConfigChange={onConfigChange}
             />
           </div>
         )

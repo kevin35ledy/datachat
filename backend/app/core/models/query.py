@@ -12,6 +12,7 @@ class ColumnMeta(BaseModel):
     type_name: str
     type_category: Literal["text", "numeric", "date", "boolean", "json", "unknown"] = "unknown"
     nullable: bool = True
+    inferred: bool = False  # True when type_category was deduced from row values (no DB metadata)
 
 
 class QueryResult(BaseModel):
